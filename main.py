@@ -17,6 +17,21 @@ else:
     print('Default GPU Device: {}'.format(tf.test.gpu_device_name()))
 
 
+def conv_1x1(x, num_outputs):
+    kernel_size = 1
+    stride = 1
+    return tf.layers.conv2d(x, num_outputs, kernel_size, stride, weights_initializer=custom_init)
+
+def upsample(x):
+    """
+    Apply a two times upsample on x and return the result.
+    :x: 4-Rank Tensor
+    :return: TF Operation
+    """
+    return tf.layers.conv2d_transpose(x, 3, (2, 2), (2, 2))
+
+
+
 def load_vgg(sess, vgg_path):
     """
     Load Pretrained VGG Model into TensorFlow.
@@ -58,6 +73,8 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # TODO: Implement function
+    
+    fcn_layer3_1x1 = tf.layers
     return None
 tests.test_layers(layers)
 
