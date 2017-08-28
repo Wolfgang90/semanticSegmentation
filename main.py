@@ -112,7 +112,10 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
-    pass
+    for epoch in range(epochs):
+        for images, labels in get_batches_fn(batch_size):
+            _, loss = sess.run([train_op, cross_entropy_loss], feed_dict = {input_image: images, correct_label: labels, keep_prob: keep_prob, learning_rate: learning_rate})
+            print("Epoch {} of {} - Loss: {:.5f}".format(epoch+1, epochs, loss))
 
 
 def run():
@@ -120,6 +123,10 @@ def run():
     image_shape = (160, 576)
     data_dir = './data'
     runs_dir = './runs'
+
+    # Hyperparameters
+    learning_rate = 0.0001
+    keep_prob = 0.8
 
     # Check TensorFlow Version
     assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
@@ -157,6 +164,13 @@ def run():
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # TODO: Build NN using load_vgg, layers, and optimize function
+        lr = tf.placeholder(tf.float32)
+        correct_label = tf.placeholder(tf.float32, [None, None, None, num_classes])
+
+        image_input, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path) 
+        output_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
+        logits, train_op, cross_entropy_loss = optimize(output_layer, correct_label, lr, num_classes)
+        
 
         # TODO: Train NN using the train_nn function
 
