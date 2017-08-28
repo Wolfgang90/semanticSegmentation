@@ -127,7 +127,7 @@ def run():
     # Hyperparameters
     learning_rate = 0.0001
     lr = tf.constant(learning_rate)
-    epochs = 2
+    epochs = 100
     batch_size = 10
 
     # Check TensorFlow Version
