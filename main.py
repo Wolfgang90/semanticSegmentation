@@ -20,15 +20,15 @@ else:
 def conv_1x1(x, num_outputs):
     kernel_size = 1
     stride = 1
-    return tf.layers.conv2d(x, num_outputs, kernel_size, stride, weights_initializer=custom_init)
+    return tf.layers.conv2d(x, num_outputs, kernel_size, stride)
 
-def upsample(x):
+def upsample(x, num_classes, k_size, stride):
     """
     Apply a two times upsample on x and return the result.
     :x: 4-Rank Tensor
     :return: TF Operation
     """
-    return tf.layers.conv2d_transpose(x, 3, (2, 2), (2, 2))
+    return tf.layers.conv2d_transpose(x, num_classes, (k_size, k_size), (stride, stride))
 
 
 
@@ -74,8 +74,17 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     # TODO: Implement function
     
-    fcn_layer3_1x1 = tf.layers
-    return None
+    # Create 1x1 convolutions for vgg layers
+    vgg_layer3_1x1 = conv_1x1(vgg_layer3_out, num_classes)
+    vgg_layer4_1x1 = conv_1x1(vgg_layer4_out, num_classes)
+    vgg_layer7_1x1 = conv_1x1(vgg_layer7_out, num_classes)
+
+    # Create decoder layers
+    dec_layer1 = upsample(vgg_layer7_1x1, num_classes, 4, 2)
+    dec_layer2 = upsample(tf.add(vgg_layer4_1x1, dec_layer1), num_classes, 4, 2)
+    dec_layer3 = upsample(tf.add(vgg_layer7_1x1, dec_layer2), num_classes, 16, 8)
+    
+    return dec_layer3
 tests.test_layers(layers)
 
 
