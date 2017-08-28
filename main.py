@@ -127,7 +127,7 @@ def run():
     # Hyperparameters
     learning_rate = 0.0001
     lr = tf.constant(learning_rate)
-    epochs = 100
+    epochs = 2
     batch_size = 10
 
     # Check TensorFlow Version
@@ -178,7 +178,7 @@ def run():
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, image_input, correct_label, keep_prob, lr)
 
         # TODO: Save inference data using helper.save_inference_samples
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, image_input)
 
         # OPTIONAL: Apply the trained model to a video
 
